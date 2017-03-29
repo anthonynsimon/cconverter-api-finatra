@@ -6,5 +6,5 @@ scalaVersion := "2.12.1"
 
 libraryDependencies ++= Seq(
 	"com.twitter" %% "finatra-http" % "2.9.0",
-	"ch.qos.logback" % "logback-classic" % "0.9.28"
+	"ch.qos.logback" % "logback-classic" % "1.2.2"
 )
