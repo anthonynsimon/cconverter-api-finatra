@@ -1,6 +1,6 @@
 package com.anthonynsimon.cconverter.api.services.impl
 
-import com.anthonynsimon.cconverter.api.domain.ExchangeRates
+import com.anthonynsimon.cconverter.api.domain.{CurrencyCode, ExchangeRates}
 import com.anthonynsimon.cconverter.api.services.ExchangeRateService
 import com.google.inject.Inject
 import com.twitter.finagle.builder.ClientBuilder
@@ -23,7 +23,7 @@ class FixerExchangeRateService @Inject()(mapper: FinatraObjectMapper) extends Ex
 			.reportTo(DefaultStatsReceiver)
 			.build()
 
-	override def getRates(baseCurrency: String): Future[ExchangeRates] = {
+	override def getRates(baseCurrency: CurrencyCode): Future[ExchangeRates] = {
 		val request = buildRequest(baseCurrency)
 		val response = client(request)
 
@@ -31,7 +31,7 @@ class FixerExchangeRateService @Inject()(mapper: FinatraObjectMapper) extends Ex
 			mapper.parse[ExchangeRates](result.contentString))
 	}
 
-	private def buildRequest(baseCurrency: String): http.Request = {
+	private def buildRequest(baseCurrency: CurrencyCode): http.Request = {
 		val request = Request("/latest?base=" + baseCurrency)
 		request.host = apiAddr
 		request

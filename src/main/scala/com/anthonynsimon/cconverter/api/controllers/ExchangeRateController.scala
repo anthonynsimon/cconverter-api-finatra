@@ -1,6 +1,6 @@
 package com.anthonynsimon.cconverter.api.controllers
 
-import com.anthonynsimon.cconverter.api.domain.{CurrencyConversionResult, CurrencyConvertRequest}
+import com.anthonynsimon.cconverter.api.domain.{CurrencyCode, CurrencyConversionResult, CurrencyConvertRequest}
 import com.anthonynsimon.cconverter.api.services.ExchangeRateService
 import com.google.inject.Inject
 import com.twitter.finagle.http.Request
@@ -11,12 +11,13 @@ class ExchangeRateController @Inject()(exchangeRateService: ExchangeRateService)
 
 	prefix("/api") {
 		get("/rates/:currencyCode") { request: Request =>
-			exchangeRateService.getRates(request.params("currencyCode"))
+			val currency = CurrencyCode(request.params("currencyCode"))
+			exchangeRateService.getRates(currency)
 		}
 
 		get("/convert") { request: CurrencyConvertRequest =>
 			val rates = Await.result(exchangeRateService.getRates(request.from))
-			val exchangeRate = if (request.from == request.to) BigDecimal.valueOf(1L) else rates.rates(request.to.toUpperCase())
+			val exchangeRate = if (request.from == request.to) BigDecimal.valueOf(1L) else rates.rates(request.to)
 			val conversionResult = request.amount * exchangeRate
 
 			CurrencyConversionResult(
