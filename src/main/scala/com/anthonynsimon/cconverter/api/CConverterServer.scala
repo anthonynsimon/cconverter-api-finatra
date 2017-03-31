@@ -6,7 +6,7 @@ import com.anthonynsimon.cconverter.api.modules.{CustomJacksonModule, ServicesMo
 import com.google.inject.Module
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.filters.{ExceptionMappingFilter, LoggingMDCFilter, TraceIdMDCFilter}
+import com.twitter.finatra.http.filters.{AccessLoggingFilter, ExceptionMappingFilter, LoggingMDCFilter, TraceIdMDCFilter}
 import com.twitter.finatra.http.routing.HttpRouter
 
 object CConverterServerMain extends CConverterServer
@@ -19,6 +19,7 @@ class CConverterServer extends HttpServer {
 
 	override def configureHttp(router: HttpRouter) {
 		router
+				.filter[AccessLoggingFilter[Request]]
 				.filter[LoggingMDCFilter[Request, Response]]
 				.filter[TraceIdMDCFilter[Request, Response]]
 				.filter[ExceptionMappingFilter[Request]]
