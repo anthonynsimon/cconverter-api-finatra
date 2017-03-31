@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CCONVERTER_API_PATH=/var/cconverter-api-finatra
+
+cd $CCONVERTER_API_PATH
+
+mkdir -p log
+
+mkdir -p pid
+
+setsid java -jar `ls cconverter-api-finatra*.jar` -http.port=:80 > log/out.log 2>&1 &
+
+echo $! > pid/process.pid

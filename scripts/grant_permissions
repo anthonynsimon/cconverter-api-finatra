@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CCONVERTER_API_PATH=/var/cconverter-api-finatra
+
+mkdir -p $CCONVERTER_API_PATH
+
+chmod -R 777 $CCONVERTER_API_PATH

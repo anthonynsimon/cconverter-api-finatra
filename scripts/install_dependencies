@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function isInstalled() {
+    if yum list installed | grep "$1" > /dev/null; then
+        true
+    else
+        false
+    fi
+}
+
+if isInstalled java-1.7.0-openjdk; then
+    yum remove -y java-1.7.0-openjdk
+else
+    echo "java-1.7.0-openjdk already removed, skipping..."
+fi
+
+if isInstalled java-1.8.0-openjdk; then
+    echo "java-1.8.0-openjdk already installed, skipping..."
+else
+    yum install -y java-1.8.0-openjdk
+fi
+
+# if isInstalled sbt; then
+#     echo "sbt already installed, skipping..."
+# else
+#     curl https://bintray.com/sbt/rpm/rpm | tee /etc/yum.repos.d/bintray-sbt-rpm.repo
+#     yum install -y sbt
+# fi

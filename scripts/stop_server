@@ -1,0 +1,7 @@
+#!/bin/bash
+
+CCONVERTER_API_PATH=/var/cconverter-api-finatra
+cd $CCONVERTER_API_PATH
+
+kill -9 `cat pid/process.pid`
+rm -rf pid/process.pid.pid
