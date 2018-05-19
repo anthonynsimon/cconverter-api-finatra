@@ -38,6 +38,7 @@ class FixerExchangeRateService @Inject()(mapper: FinatraObjectMapper,
 
   private def buildRequest(baseCurrency: CurrencyCode): http.Request = {
     val request = Request("/latest?base=" + baseCurrency)
+    // Request to fixer.io should contain host header
     request.host = host
     request
   }
