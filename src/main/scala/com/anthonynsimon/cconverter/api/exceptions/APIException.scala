@@ -1,7 +1,4 @@
 package com.anthonynsimon.cconverter.api.exceptions
 
-sealed trait APIException extends Exception {
-  val message: String
-}
-
-case class InvalidCurrencyCodeException(message: String) extends APIException
+abstract class APIException(message: String) extends Exception(message)
+case class InvalidCurrencyCodeException(message: String) extends APIException(message)
