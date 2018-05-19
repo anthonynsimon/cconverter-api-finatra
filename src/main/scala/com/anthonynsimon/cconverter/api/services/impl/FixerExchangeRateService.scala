@@ -11,34 +11,34 @@ import com.twitter.finatra.json.FinatraObjectMapper
 import com.twitter.util.{Duration, Future}
 
 class FixerExchangeRateService @Inject()(mapper: FinatraObjectMapper,
-										 cache: CacheService[CurrencyCode, ExchangeRates]) extends ExchangeRateService {
+                                         cache: CacheService[CurrencyCode, ExchangeRates]) extends ExchangeRateService {
 
-	private val apiAddr = "api.fixer.io:80"
+  private val host = "api.fixer.io:80"
 
-	private val client: Service[http.Request, http.Response] = ClientBuilder()
-			.codec(new Http())
-			.hosts(apiAddr)
-			.hostConnectionLimit(1)
-			.timeout(Duration.fromMilliseconds(5000))
-			.retries(2)
-			.reportTo(DefaultStatsReceiver)
-			.build()
+  private val client: Service[http.Request, http.Response] = ClientBuilder()
+    .codec(new Http())
+    .hosts(host)
+    .hostConnectionLimit(1)
+    .timeout(Duration.fromMilliseconds(5000))
+    .retries(2)
+    .reportTo(DefaultStatsReceiver)
+    .build()
 
-	override def getRates(baseCurrency: CurrencyCode): Future[ExchangeRates] = {
-		cache.get(baseCurrency) match {
-			case Some(value) => Future.value[ExchangeRates](value)
-			case _ => {
-				val request = buildRequest(baseCurrency)
-				val response = client(request)
-				response.map[ExchangeRates](result => mapper.parse[ExchangeRates](result.contentString))
-						.onSuccess(rates => cache.put(baseCurrency, rates))
-			}
-		}
-	}
+  override def getRates(baseCurrency: CurrencyCode): Future[ExchangeRates] = {
+    cache.get(baseCurrency) match {
+      case Some(value) => Future.value[ExchangeRates](value)
+      case _ => {
+        val request = buildRequest(baseCurrency)
+        val response = client(request).map(result => mapper.parse[ExchangeRates](result.contentString))
+        response.onSuccess(rates => cache.put(baseCurrency, rates))
+        response
+      }
+    }
+  }
 
-	private def buildRequest(baseCurrency: CurrencyCode): http.Request = {
-		val request = Request("/latest?base=" + baseCurrency)
-		request.host = apiAddr
-		request
-	}
+  private def buildRequest(baseCurrency: CurrencyCode): http.Request = {
+    val request = Request("/latest?base=" + baseCurrency)
+    request.host = host
+    request
+  }
 }
